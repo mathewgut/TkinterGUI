@@ -67,31 +67,40 @@ def Submit():
     submit_flag = True
 
     # IPV6 used to find accurate information, ipv4's tend to be restrictive for some reason
-    IP6 = requests.get("https://api6.ipify.org?format=json").json()
-    IP6 = IP6["ip"]
+    try:
+        IP6 = requests.get("https://api6.ipify.org?format=json").json()
+    except:
+        IP6 = IP
 
     # fetch location data from IPV6
     response = requests.get(f"http://ipwho.is/{IP6}").json()
 
     # create variables for label text
-    lat = response["latitude"]
-    long = response["longitude"]
-    city = response["city"]
-    isp = response["connection"]["isp"]
+    try:
+        lat = response["latitude"]
+        long = response["longitude"]
+        city = response["city"]
+        isp = response["connection"]["isp"]
 
-    # create labels including text variables
-    ip_label = tk.Label(root, text=f"Hi {entry.get()}, your IP is {IP}")
-    isp_label = tk.Label(root, text=f"ISP: {isp}")
-    city_label = tk.Label(root, text=f"City is {city}")
-    lat_long_label = tk.Label(root, text=f"Latitude: {lat}, Longitude: {long}")
-    threat_label = tk.Label(root, text=f"Dispatching drone strike to {city}, {lat}, {long}", font=("Arial",12))
+        # create labels including text variables
+        ip_label = tk.Label(root, text=f"Hi {entry.get()}, your IP is {IP}")
+        isp_label = tk.Label(root, text=f"ISP: {isp}")
+        city_label = tk.Label(root, text=f"City is {city}")
+        lat_long_label = tk.Label(root, text=f"Latitude: {lat}, Longitude: {long}")
+        threat_label = tk.Label(root, text=f"Dispatching drone strike to {city}, {lat}, {long}", font=("Arial",12))
 
-    # pack and show variables
-    ip_label.pack(pady=2)
-    isp_label.pack()
-    city_label.pack()
-    lat_long_label.pack()
-    threat_label.pack()
+        # pack and show variables
+        ip_label.pack(pady=2)
+        isp_label.pack()
+        city_label.pack()
+        lat_long_label.pack()
+        threat_label.pack()
+    except:
+        ip_label = tk.Label(root, text=f"Hi {entry.get()}, your IP is {IP}")
+        defeat_label = tk.Label(root, text="Could not fetch location data :( \n Drone strike aborted.", font=("Arial",12))
+        
+        ip_label.pack(pady=2)
+        defeat_label.pack()
     return
 
 # fetch ip information including name on click
